@@ -71,8 +71,8 @@ defmodule ClickhouseEcto.QueryString do
       ?\s
       | Helpers.intersperse_map(joins, ?\s, fn
           %JoinExpr{qual: qual, ix: ix, source: source, on: %QueryExpr{expr: on_expr}} ->
-            {join, _name} = Helpers.get_source(query, sources, ix, source)
-            ["ANY", join_qual(qual), join, " USING ", on_join_expr(on_expr)]
+            {join, name} = Helpers.get_source(query, sources, ix, source)
+            ["ANY", join_qual(qual), join, " AS ", name, " USING ", on_join_expr(on_expr)]
         end)
     ]
   end
