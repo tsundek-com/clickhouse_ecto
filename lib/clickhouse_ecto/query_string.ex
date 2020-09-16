@@ -137,18 +137,16 @@ defmodule ClickhouseEcto.QueryString do
     end
   end
 
-  def limit(%Query{offset: nil, limit: nil}, _sources), do: []
+  def limit(%Query{limit: nil}, _sources), do: []
 
-  def limit(%Query{offset: nil, limit: %QueryExpr{expr: expr}} = query, sources) do
+  def limit(%Query{limit: %QueryExpr{expr: expr}} = query, sources) do
     [" LIMIT ", expr(expr, sources, query)]
   end
 
-  def limit(
-        %Query{offset: %QueryExpr{expr: expr_offset}, limit: %QueryExpr{expr: expr_limit}} =
-          query,
-        sources
-      ) do
-    [" LIMIT ", expr(expr_offset, sources, query), ", ", expr(expr_limit, sources, query)]
+  def offset(%{offset: nil}, _sources), do: []
+
+  def offset(%{offset: %QueryExpr{expr: expr}} = query, sources) do
+    [" OFFSET " | expr(expr, sources, query)]
   end
 
   def boolean(_name, [], _sources, _query), do: []
