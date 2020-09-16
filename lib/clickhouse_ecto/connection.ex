@@ -84,6 +84,14 @@ defmodule ClickhouseEcto.Connection do
     execute(conn, %Query{name: "", statement: statement}, params, options)
   end
 
+  def query(conn, statement, params, options) do
+    Clickhousex.query(conn, statement, params, options)
+  end
+
+  def ddl_logs(result) do
+    []
+  end
+
   defp is_no_data_found_bug?({:error, error}, statement) do
     is_dml =
       statement
