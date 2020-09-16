@@ -87,6 +87,9 @@ defmodule ClickhouseEcto.Helpers do
     :binary.replace(value, "'", "''", [:global])
   end
 
+  def tagged_to_db(:integer), do: "Int64"
+  def tagged_to_db(other), do: ecto_to_db(other)
+
   def ecto_to_db({:array, t}), do: "Array(#{ecto_to_db(t)})"
   def ecto_to_db(:id), do: "UInt32"
   def ecto_to_db(:binary_id), do: "FixedString(36)"

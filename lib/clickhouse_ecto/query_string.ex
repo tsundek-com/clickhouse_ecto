@@ -287,7 +287,7 @@ defmodule ClickhouseEcto.QueryString do
   end
 
   def expr(%Ecto.Query.Tagged{value: other, type: type}, sources, query) do
-    ["CAST(", expr(other, sources, query), " AS ", Helpers.ecto_to_db(type), ")"]
+    ["CAST(", expr(other, sources, query), " AS ", Helpers.tagged_to_db(type), ")"]
   end
 
   def expr(nil, _sources, _query), do: "NULL"
