@@ -59,8 +59,7 @@ defmodule ClickhouseEcto.Storage do
   defp run_query(sql, opts) do
     opts =
       opts
-      |> Keyword.drop([:name, :log])
-      |> Keyword.put(:pool, DBConnection.Connection)
+      |> Keyword.drop([:name, :log, :pool, :pool_size])
       |> Keyword.put(:backoff_type, :stop)
 
     {:ok, pid} = Task.Supervisor.start_link()
