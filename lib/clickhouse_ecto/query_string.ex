@@ -72,7 +72,7 @@ defmodule ClickhouseEcto.QueryString do
       | Helpers.intersperse_map(joins, ?\s, fn
           %JoinExpr{qual: qual, ix: ix, source: source, on: %QueryExpr{expr: on_expr}} ->
             {join, name} = Helpers.get_source(query, sources, ix, source)
-            [join_qual(qual), join, " AS ", name, " USING ", on_join_expr(on_expr)]
+            [join_qual(qual), join, " AS ", name, on_join_expr(on_expr)]
         end)
     ]
   end
@@ -87,14 +87,17 @@ defmodule ClickhouseEcto.QueryString do
   end
 
   def on_join_expr({{:., [], [{:&, [], _}, column]}, [], []}) when is_atom(column) do
-    column |> Atom.to_string()
+    " USING " <> Atom.to_string(column)
   end
 
   def on_join_expr({:==, _, [{{_, _, [_, column]}, _, _}, _]}) when is_atom(column) do
-    column |> Atom.to_string()
+    " USING " <> Atom.to_string(column)
   end
+  def on_join_expr(true), do: ""
 
   def join_qual(:inner), do: " INNER JOIN "
+  def join_qual(:inner_lateral), do: " ARRAY JOIN "
+  def join_qual(:left_lateral), do: " LEFT ARRAY JOIN "
   def join_qual(:left), do: " LEFT OUTER JOIN "
 
   def where(%Query{wheres: wheres} = query, sources) do

@@ -91,6 +91,13 @@ defmodule ClickhouseEcto.Helpers do
   def tagged_to_db(other), do: ecto_to_db(other)
 
   def ecto_to_db({:array, t}), do: "Array(#{ecto_to_db(t)})"
+  def ecto_to_db({:nested, types}) do
+    fields = Enum.map(Tuple.to_list(types), fn {fieldname, fieldtype} ->
+      Atom.to_string(fieldname) <> " " <> ecto_to_db(fieldtype)
+    end) |> Enum.join(", ")
+
+    "Nested(#{fields})"
+  end
   def ecto_to_db(:id), do: "UInt32"
   def ecto_to_db(:binary_id), do: "FixedString(36)"
   def ecto_to_db(:uuid), do: "FixedString(36)"
