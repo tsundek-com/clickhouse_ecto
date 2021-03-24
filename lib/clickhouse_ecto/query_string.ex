@@ -55,9 +55,9 @@ defmodule ClickhouseEcto.QueryString do
     )
   end
 
-  def from(%{from: %{source: source}} = query, sources) do
+  def from(%{from: %{source: source, hints: hints}} = query, sources) do
     {from, name} = Helpers.get_source(query, sources, 0, source)
-    [" FROM ", from, " AS " | name]
+    [" FROM ", from, " AS ", name, hints(hints)]
   end
 
   def update_fields(query, _sources) do
@@ -151,6 +151,9 @@ defmodule ClickhouseEcto.QueryString do
   def offset(%{offset: %QueryExpr{expr: expr}} = query, sources) do
     [" OFFSET " | expr(expr, sources, query)]
   end
+
+  defp hints([_ | _] = hints), do: [" ", Enum.intersperse(hints, ", ")]
+  defp hints([]), do: []
 
   def boolean(_name, [], _sources, _query), do: []
 
