@@ -249,8 +249,10 @@ defmodule ClickhouseEcto.QueryString do
     Connection.all(query)
   end
 
-  def expr({:fragment, _, [kw]}, _sources, query) when is_list(kw) or tuple_size(kw) == 3 do
-    Helpers.error!(query, "ClickHouse adapter does not support keyword or interpolated fragments")
+  def expr({:fragment, _, [kw]}, sources, query) when is_list(kw) or tuple_size(kw) == 3 do
+    Enum.reduce(kw, query, fn {key, {op, val}}, query ->
+      expr({op, nil, [key, val]}, sources, query)
+    end)
   end
 
   def expr({:fragment, _, parts}, sources, query) do
@@ -310,6 +312,10 @@ defmodule ClickhouseEcto.QueryString do
 
   def expr(literal, _sources, _query) when is_float(literal) do
     Float.to_string(literal)
+  end
+
+  def expr(literal, _sources, _query) when is_atom(literal) do
+    Atom.to_string(literal)
   end
 
   def interval(count, _interval, sources, query) do
