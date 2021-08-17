@@ -152,8 +152,16 @@ defmodule ClickhouseEcto.QueryString do
     [" OFFSET " | expr(expr, sources, query)]
   end
 
-  defp hints([_ | _] = hints), do: [" ", Enum.intersperse(hints, ", ")]
+  defp hints([_ | _] = hints) do
+    hint_list = Enum.map(hints, &hint/1)
+    |> Enum.intersperse(", ")
+
+    [" ", hint_list]
+  end
   defp hints([]), do: []
+
+  defp hint(hint_str) when is_binary(hint_str), do: hint_str
+  defp hint({key, val}) when is_atom(key) and is_integer(val), do: [Atom.to_string(key), " ", Integer.to_string(val)]
 
   def boolean(_name, [], _sources, _query), do: []
 
