@@ -97,6 +97,7 @@ defmodule ClickhouseEcto.QueryString do
 
   def join_qual(:inner), do: " INNER JOIN "
   def join_qual(:inner_lateral), do: " ARRAY JOIN "
+  def join_qual(:full), do: "FULL JOIN"
   def join_qual(:left_lateral), do: " LEFT ARRAY JOIN "
   def join_qual(:left), do: " LEFT OUTER JOIN "
 
